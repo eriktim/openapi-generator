@@ -1,0 +1,172 @@
+openapi: "3.0.0"
+info:
+  version: 1.0.0
+  title: message-engine
+  license:
+    name: MIT
+servers:
+  - url: http://localhost:9090
+paths:
+  /data:
+    get:
+      responses:
+        "200":
+          description: Lots of data
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Data"
+  /message/{messageId}:
+    get:
+      summary: Get current conversation
+      operationId: getConversation
+      parameters:
+        - name: messageId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: foo
+          in: query
+          required: false
+          schema:
+            $ref: "#/components/schemas/Foo"
+        - name: ok
+          in: query
+          required: false
+          schema:
+            type: string
+            enum:
+              - ok
+              - notok
+      responses:
+        "200":
+          description: Current conversation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Message"
+
+components:
+  schemas:
+    Message:
+      type: object
+      required:
+        - messageType
+        - messageId
+      discriminator:
+        propertyName: messageType
+      properties:
+        messageId:
+          type: string
+          format: uuid
+        messageType:
+          type: string
+
+    Foo:
+      type: string
+      enum:
+        - foo
+        - bar
+        - baz
+
+    Task:
+      type: object
+      required:
+        - id
+        - taskType
+      properties:
+        id:
+          type: string
+          format: uuid
+        taskType:
+          type: string
+      discriminator:
+        propertyName: taskType
+        mapping:
+          simpleTask: "#/components/schemas/SimpleTask"
+          complextTask: "#/components/schemas/ComplexTask"
+
+    SimpleTask:
+      allOf:
+        - $ref: "#/components/schemas/Task"
+        - type: object
+          properties:
+            description:
+              type: string
+
+    ComplexTask:
+      allOf:
+        - $ref: "#/components/schemas/Task"
+        - type: object
+          properties:
+            reference:
+              type: string
+            message:
+              type: string
+            deadline:
+              type: string
+              format:
+                date-time
+
+    MessageStatement:
+      allOf:
+        - $ref: "#/components/schemas/Message"
+        - type: object
+          required:
+            - text
+          properties:
+            text:
+              type: string
+
+    Data:
+      type: object
+      required:
+        - string
+        - nullableString
+        - list
+      properties:
+        integer:
+          type: integer
+        short:
+          type: integer
+          format: int32
+        number:
+          type: number
+        float:
+          type: number
+          format: float
+        double:
+          type: number
+          format: double
+        maybeString:
+          type: string
+        string:
+          type: string
+        nullableMaybeString:
+          type: string
+          nullable: true
+        nullableString:
+          type: string
+          nullable: true
+        date:
+          type: string
+          format: date
+        dateTime:
+          type: string
+          format: date-time
+        bytes:
+          type: string
+          format: byte
+        boolean:
+          type: boolean
+        maybeList:
+          type: array
+          items:
+            type: string
+        list:
+          type: array
+          items:
+            type: string
+
