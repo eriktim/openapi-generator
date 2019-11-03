@@ -1,0 +1,77 @@
+openapi: 3.0.0
+info:
+  title: About MyObjects
+  version: 0.0.1
+paths:
+  /api:
+    put:
+      summary: save MyObject data
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MyObject'
+      responses:
+        200:
+          description: return MyObject data
+          content:
+            application/json:
+              schema:
+                properties:
+                  name:
+                    type: string
+
+components:
+  schemas:
+    MyObject:
+      oneOf:
+        - $ref: "#/components/schemas/MyObjectHidden"
+        - $ref: "#/components/schemas/MyObjectActive"
+      discriminator:
+        propertyName: state
+        mapping:
+          HIDDEN: "#/components/schemas/MyObjectHidden"
+          ACTIVE: "#/components/schemas/MyObjectActive"
+
+    AnyObject:
+      oneOf:
+        - $ref: "#/components/schemas/MyObjectHidden"
+        - $ref: "#/components/schemas/MyObjectActive"
+
+    ParentObject:
+      required:
+        - state
+      properties:
+        state:
+          type: string
+      discriminator:
+        propertyName: state
+        mapping:
+          child: "#/components/schemas/ChildObject"
+
+    MyObjectHidden:
+      type: object
+      required:
+        - state
+      properties:
+        state:
+          type: string
+
+    MyObjectActive:
+      type: object
+      required:
+        - state
+      properties:
+        state:
+          type: string
+
+    ChildObject:
+      allOf:
+        - $ref: "#/components/schemas/ParentObject"
+        - type: object
+          required:
+            - state
+          properties:
+            state:
+              type: string

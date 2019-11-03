@@ -260,6 +260,7 @@ public class KotlinSpringServerCodegen extends AbstractKotlinCodegen
         importMapping.put("JsonProperty", "com.fasterxml.jackson.annotation.JsonProperty");
         importMapping.put("JsonSubTypes", "com.fasterxml.jackson.annotation.JsonSubTypes");
         importMapping.put("JsonTypeInfo", "com.fasterxml.jackson.annotation.JsonTypeInfo");
+        importMapping.put("JsonUnwrapped", "com.fasterxml.jackson.annotation.JsonUnwrapped");
         // import JsonCreator if JsonProperty is imported
         // used later in recursive import in postProcessingModels
         importMapping.put("com.fasterxml.jackson.annotation.JsonProperty", "com.fasterxml.jackson.annotation.JsonCreator");
@@ -436,7 +437,7 @@ public class KotlinSpringServerCodegen extends AbstractKotlinCodegen
         }
 
         if (model.discriminator != null && additionalProperties.containsKey("jackson")) {
-            model.imports.addAll(Arrays.asList("JsonSubTypes", "JsonTypeInfo"));
+            model.imports.addAll(Arrays.asList("JsonSubTypes", "JsonTypeInfo", "JsonUnwrapped"));
         }
     }
 

@@ -5,20 +5,20 @@
 {{/vars}}
  */{{#discriminator}}
 {{>typeInfoAnnotation}}{{/discriminator}}
-{{#discriminator}}interface {{classname}}{{/discriminator}}{{^discriminator}}data class {{classname}} (
+{{#discriminator}}sealed class {{classname}}{{/discriminator}}{{^discriminator}}data class {{classname}} (
 {{#requiredVars}}
 {{>dataClassReqVar}}{{^-last}},
 {{/-last}}{{/requiredVars}}{{#hasRequired}}{{#hasOptional}},
 {{/hasOptional}}{{/hasRequired}}{{#optionalVars}}{{>dataClassOptVar}}{{^-last}},
 {{/-last}}{{/optionalVars}}
-) {{/discriminator}}{{#parent}}: {{{parent}}}{{/parent}}{
-{{#discriminator}}
+) {{/discriminator}}{{#parent}}: {{{parent}}}{{/parent}}
+{{#discriminator}}(
     {{#requiredVars}}
         {{>interfaceReqVar}}
     {{/requiredVars}}
     {{#optionalVars}}
         {{>interfaceOptVar}}
-    {{/optionalVars}}
+    {{/optionalVars}})
 {{/discriminator}}
 {{#hasEnums}}{{#vars}}{{#isEnum}}
     /**
@@ -31,4 +31,7 @@
     {{/enumVars}}{{/allowableValues}}
     }
 {{/isEnum}}{{/vars}}{{/hasEnums}}
-}
+
+{{#discriminator.mappedModels}}
+data class {{modelName}}Type(@JsonUnwrapped val value: {{modelName}}) : {{classname}}("{{mappingName}}")
+{{/discriminator.mappedModels}}
