@@ -3,75 +3,148 @@ info:
   title: About MyObjects
   version: 0.0.1
 paths:
-  /api:
-    put:
-      summary: save MyObject data
+  /oneOf:
+    post:
+      summary: One of
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/MyObject'
+              $ref: '#/components/schemas/OneOf'
       responses:
         200:
-          description: return MyObject data
+          description: Response
           content:
             application/json:
               schema:
-                properties:
-                  name:
-                    type: string
+                type: string
+  /oneOfWithDiscriminator:
+    post:
+      summary: One of with discriminator
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OneOfWithDiscriminator'
+      responses:
+        200:
+          description: Response
+          content:
+            application/json:
+              schema:
+                type: string
+  /oneOfWithAllOfDiscriminator:
+    post:
+      summary: One of with discriminator from all of
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OneOfWithAllOfDiscriminator'
+      responses:
+        200:
+          description: Response
+          content:
+            application/json:
+              schema:
+                type: string
+  /allOf:
+    post:
+      summary: All of
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AllOf'
+      responses:
+        200:
+          description: Response
+          content:
+            application/json:
+              schema:
+                type: string
+  /allOfWithDiscriminator:
+    post:
+      summary: All of with discriminator
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BaseObject'
+      responses:
+        200:
+          description: Response
+          content:
+            application/json:
+              schema:
+                type: string
 
 components:
   schemas:
-    MyObject:
+    OneOf:
       oneOf:
-        - $ref: "#/components/schemas/MyObjectHidden"
-        - $ref: "#/components/schemas/MyObjectActive"
+        - $ref: "#/components/schemas/ObjectA"
+        - $ref: "#/components/schemas/ObjectB"
+    OneOfWithDiscriminator:
+      oneOf:
+        - $ref: "#/components/schemas/ObjectA"
+        - $ref: "#/components/schemas/ObjectB"
       discriminator:
         propertyName: state
         mapping:
-          HIDDEN: "#/components/schemas/MyObjectHidden"
-          ACTIVE: "#/components/schemas/MyObjectActive"
-
-    AnyObject:
+          a: "#/components/schemas/ObjectA"
+          b: "#/components/schemas/ObjectB"
+    OneOfWithAllOfDiscriminator:
       oneOf:
-        - $ref: "#/components/schemas/MyObjectHidden"
-        - $ref: "#/components/schemas/MyObjectActive"
-
-    ParentObject:
-      required:
-        - state
-      properties:
-        state:
-          type: string
-      discriminator:
-        propertyName: state
-        mapping:
-          child: "#/components/schemas/ChildObject"
-
-    MyObjectHidden:
-      type: object
-      required:
-        - state
-      properties:
-        state:
-          type: string
-
-    MyObjectActive:
-      type: object
-      required:
-        - state
-      properties:
-        state:
-          type: string
-
-    ChildObject:
+        - $ref: "#/components/schemas/SubObjectA"
+        - $ref: "#/components/schemas/SubObjectB"
+    AllOf:
       allOf:
-        - $ref: "#/components/schemas/ParentObject"
+        - $ref: "#/components/schemas/ObjectA"
+        - $ref: "#/components/schemas/ObjectB"
+
+    BaseObject:
+      required:
+        - objectType
+      properties:
+        objectType:
+          type: string
+      discriminator:
+        propertyName: objectType
+
+    ObjectA:
+      type: object
+      required:
+        - objectType
+      properties:
+        objectType:
+          type: string
+
+    ObjectB:
+      type: object
+      required:
+        - objectType
+      properties:
+        objectType:
+          type: string
+
+    SubObjectA:
+      allOf:
+        - $ref: "#/components/schemas/BaseObject"
         - type: object
-          required:
-            - state
           properties:
-            state:
+            nameA:
+              type: string
+
+    SubObjectB:
+      allOf:
+        - $ref: "#/components/schemas/BaseObject"
+        - type: object
+          properties:
+            nameB:
               type: string
